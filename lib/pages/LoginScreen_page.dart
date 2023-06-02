@@ -21,7 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   late UserModel _currentUser;
   get index => _listAuth.user.length - 1;
   bool _canRegister = false;
-  bool _isLoggedIn = false;
+
   @override
   void initState() {
     super.initState();
@@ -50,6 +50,8 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {});
   }
 
+  bool _isLoggedIn = false;
+
   void _onInputChange() {
     if (_listAuth.user.isEmpty) {
       _canRegister = true;
@@ -65,7 +67,9 @@ class _LoginPageState extends State<LoginPage> {
     String password = _passwordController.text.trim();
     UserModel auth =
         UserModel(id: _indexid++, username: username, password: password);
-
+    // Thực hiện xác thực người dùng
+    // bool isAuthenticated = await authenticateUser(username, password);
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
     bool isExistUser = _listAuth.isUsernameExist(username, _listAuth.user);
     bool isExistPass = _listAuth.isPasswwordExist(password, _listAuth.user);
 
@@ -77,18 +81,12 @@ class _LoginPageState extends State<LoginPage> {
       setState(() {
         _isLoggedIn = true;
       });
-      _currentUser = user ??
-          UserModel(
-            id: user!.id,
-            username: '${user.username}',
-            password: '${user.password}',
-          );
 
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
               builder: (context) => MenuPage(
-                    currentUser: _currentUser,
+                    currentUser: auth,
                   )));
 
       final snackBar = SnackBar(
@@ -201,7 +199,7 @@ class _LoginPageState extends State<LoginPage> {
                         setState(() {});
                       },
                       child: Text(
-                        'Đăng ký',
+                        'Resgister',
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           color: _canRegister ? Colors.red[800] : Colors.grey,
@@ -213,7 +211,8 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(
                   height: 20.0,
-                ),   // ListView.builder(
+                ),
+                // ListView.builder(
                 //   reverse: true,
                 //   physics: const NeverScrollableScrollPhysics(), //khoa cuon
                 //   shrinkWrap: true,
@@ -244,8 +243,6 @@ class _LoginPageState extends State<LoginPage> {
                 //     );
                 //   },
                 // ),
-
-
               ],
             ),
           ),
